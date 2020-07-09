@@ -1,0 +1,14 @@
+-docking						# the docking option group
+#	-partners ABX_CY				# set rigid body docking partners
+	-dock_pert 3 8					# set coarse perturbation parameters (degrees and angstroms)
+	-dock_mcm_trans_magnitude 0.1			# refinement translational perturbation
+	-dock_mcm_rot_magnitude 5.0			# refinement rotational perturbation
+#-run:max_retry_job 10					# if the mover fails, retry 50 times
+-use_input_sc						# add the side chains from the input pdb to the rotamer library
+-out							# out option group
+	-file						# out:file option group
+		-scorefile docking.fasc			# the name of the model score file
+-out
+	-suffix _docking    				#Adds a suffix "_full" to the end of outputs
+-load_PDB_components false
+-nstruct 50

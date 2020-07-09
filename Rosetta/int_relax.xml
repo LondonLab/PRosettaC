@@ -1,0 +1,31 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="r15" weights="ref2015" />
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+    <Neighborhood name="lig_env" resnums="1-1" />
+    <Not name="rest" selector="lig_env" />
+  </RESIDUE_SELECTORS>
+  <TASKOPERATIONS>
+    <RestrictToRepacking name="rtr" />
+    <OperateOnResidueSubset name="rti" selector="rest" >
+      <PreventRepackingRLT />
+    </OperateOnResidueSubset>
+  </TASKOPERATIONS>
+  <FILTERS>
+  </FILTERS>
+  <MOVERS>
+    <PackRotamersMover name="repack" scorefxn="r15" task_operations="rtr,rti" />
+    <MinMover name="minimize_sc" scorefxn="r15" chi="1" bb="0">
+      <MoveMap name="min_torsion_mm">
+	<Span begin="1" end="1" chi="false" bb="false" />
+      </MoveMap>
+    </MinMover>
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    <Add mover="repack" />
+    <Add mover="minimize_sc" />
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

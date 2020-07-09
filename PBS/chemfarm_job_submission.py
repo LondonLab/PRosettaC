@@ -1,0 +1,10 @@
+sendjob_text = ['#!/bin/bash\n',
+'#PBS -q medium\n',
+'#PBS -N un_sub_l\n',
+'#PBS -l select=1:ncpus=1:mem=2048mb\n',
+'#PBS -j eo\n',
+'echo `hostname`\n',
+'cd $PBS_O_WORKDIR\n',
+'MYCOMMAND=',
+'\n$MYCOMMAND\n',
+'cd -\n']

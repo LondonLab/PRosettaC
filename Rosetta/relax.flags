@@ -1,0 +1,4 @@
+-ex1
+-ex2
+-use_input_sc
+-ignore_ligand_chi true
