@@ -11,7 +11,7 @@ conda install -c anaconda numpy
 
 4. Our scripts rely on the PBS job scheduler (https://en.wikipedia.org/wiki/Portable_Batch_System).
 
-5. Set the following environment parameters: export PATCHDOCK=”/Path_to_PatchDock/”, export OB=”/Path_to_PatchDock/”, export SCRIPTS_FOL=”/Path_to_the_folder_containing_the_scripts/”, export ROSETTA_FOL=”/Path_to_Rosetta/”, PBS_HOME=”/Path_to_PBS_bin_folder/”.
+5. Set the following environment parameters: export PATCHDOCK=”/Path_to_PatchDock/”, export OB=”/Path_to_OpenBabel/”, export SCRIPTS_FOL=”/Path_to_the_git_folder/”, export ROSETTA_FOL=”/Path_to_Rosetta/”, PBS_HOME=”/Path_to_PBS_bin_folder/”.
 
 Usage: python main.py Protac_params.txt
 
