@@ -3,6 +3,7 @@ import ProtacLib as pl
 import Rosetta as rs
 import Utils
 import glob
+import PYMOLUtils
 sys.path.append(Utils.SCRIPTS_FOL + 'PBS/')
 import Cluster
 

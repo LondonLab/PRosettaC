@@ -9,7 +9,7 @@ def main(name, argv):
                 return
 
         cluster = Cluster.Cluster()
-        cluster.runSingle("python " + Utils.SCRIPTS_FOL + 'auto.py ' + argv[0])
+        cluster.runSingle("python " + Utils.SCRIPTS_FOL + 'main.py ' + argv[0])
 
 def print_usage(name):
         print("Usage : " + name + " <param file>")
