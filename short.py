@@ -12,7 +12,7 @@ def main(name, argv):
         cluster.runSingle("python " + Utils.SCRIPTS_FOL + 'main.py ' + argv[0])
 
 def print_usage(name):
-        print "Usage : " + name + " <param file>"
+        print("Usage : " + name + " <param file>")
 
 if __name__ == "__main__":
     main(sys.argv[0], sys.argv[1:])
