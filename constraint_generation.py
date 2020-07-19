@@ -7,7 +7,7 @@
 #Chains are the static and moving chains. E.g. 'AC'.
 
 import protac_lib as pl
-import Rosetta as rs
+import rosetta as rs
 import utils
 import sys,os
 
