@@ -6,9 +6,9 @@
 #Struct is the local docking solution.
 #Chains are the static and moving chains. E.g. 'AC'.
 
-import ProtacLib as pl
+import protac_lib as pl
 import Rosetta as rs
-import Utils
+import utils
 import sys,os
 
 def main(name, argv):
@@ -23,7 +23,7 @@ def main(name, argv):
         combined = 'combined_' + argv[3] + '.pdb'
         #extracting the binders (heads)
         os.system('grep \'HETATM\' ' + argv[4] + ' > ' + docked_pdb)
-        Utils.pdb2sdf(docked_pdb, docked_sdf)
+        utils.pdb2sdf(docked_pdb, docked_sdf)
         #generatign constrained conformations including 3 virtual atoms
         NBR, v_atoms_sdf = pl.GenConstConf(argv[:2], docked_sdf, argv[2], sdf_file, 0, v_atoms_sdf)
         #if no conformations were not able to be generated, the local docking solution is discarded

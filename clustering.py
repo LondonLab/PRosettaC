@@ -7,9 +7,8 @@
 #Thoughout the protocol, the moving chain is always the E3 ligase.
 
 import os,sys,shutil
-import ProtacLib as pl
+import protac_lib as pl
 import Rosetta as rs
-import Utils
 import glob
 import math
 from sklearn.cluster import DBSCAN

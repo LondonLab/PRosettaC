@@ -1,9 +1,9 @@
 import os,sys
-import Utils
+import utils
 
-FOLDER = Utils.SCRIPTS_FOL + "Rosetta/"
-SCRIPTS = Utils.ROSETTA_FOL + "/main/source/bin/rosetta_scripts.default.linuxgccrelease"
-CLEAN = "python2.7 " + Utils.ROSETTA_FOL + "/tools/protein_tools/scripts/clean_pdb.py"
+FOLDER = utils.SCRIPTS_FOL + "Rosetta/"
+SCRIPTS = utils.ROSETTA_FOL + "/main/source/bin/rosetta_scripts.default.linuxgccrelease"
+CLEAN = "python2.7 " + utils.ROSETTA_FOL + "/tools/protein_tools/scripts/clean_pdb.py"
 
 #get only the ATOM entries for specific chains
 def clean(struct, chains):
@@ -20,10 +20,10 @@ def clean_replace(struct, chains):
 
 #run the mol_to_param Rosetta script
 def mol_to_params(sdf_file, name, pdb, overwrite = True, conformers = False, nbr = -1, v_atoms_sdf = ''):
-    Utils.addH_sdf(sdf_file)
+    utils.addH_sdf(sdf_file)
     if not v_atoms_sdf == '':
-        nbr = Utils.add_virtual_atoms(sdf_file, v_atoms_sdf, sdf_file)
-    line = "python2.7 " + Utils.ROSETTA_FOL + "/main/source/scripts/python/public/molfile_to_params.py " + sdf_file + " -n " + name + " -p " + pdb
+        nbr = utils.add_virtual_atoms(sdf_file, v_atoms_sdf, sdf_file)
+    line = "python2.7 " + utils.ROSETTA_FOL + "/main/source/scripts/python/public/molfile_to_params.py " + sdf_file + " -n " + name + " -p " + pdb
     if overwrite:
         line += " --clobber"
     if conformers:

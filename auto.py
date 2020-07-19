@@ -1,10 +1,10 @@
 import os,sys,shutil
-import ProtacLib as pl
-import Rosetta as rs
-import Utils
+import protac_lib as pl
+import rosetta as rs
+import utils
 import glob
-import PYMOLUtils
-sys.path.append(Utils.SCRIPTS_FOL + 'PBS/')
+import pymol_utils
+sys.path.append(utils.SCRIPTS_FOL + 'PBS/')
 import Cluster
 
 def main(name, argv):
@@ -28,7 +28,7 @@ def main(name, argv):
         Chains = ['A', 'B']
         Anchors = []
         for i in [0,1]:
-                PYMOLUtils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i])
+                pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i])
                 Anchors.append(pl.get_mcs_sdf(Heads[i], Subs[i], protac))
                 if Anchors[i] == None:
                         log.write('There is some problem with the PDB ligand ' + LIG[i] + '. It could be either one of the following options: the ligand is not readable by RDKit, the MCS (maximal common substructure) between the PROTAC smiles and ' + LIG[i] + ' ligand does not have an anchor atom which is uniquly defined in regard to smiles, or there is a different problem regarding substructure match. Try to choose a different PDB template, or use the manual option, supplying your own .sdf files.\n')
@@ -40,7 +40,7 @@ def main(name, argv):
         for i in [0, 1]:
                 #Adding hydrogens to the heads (binders)
                 new_head = Heads[i].split('.')[0] + "_H.sdf"
-                Utils.addH_sdf(Heads[i], new_head)
+                utils.addH_sdf(Heads[i], new_head)
                 Anchors[i] = pl.translate_anchors(Heads[i], new_head, Anchors[i])
                 Heads[i] = new_head
                 #Cleaning the structures
@@ -69,7 +69,7 @@ def main(name, argv):
 
         #PatchDock
         log.write('Running PatchDock with the constrains\n')
-        Num_Results = Utils.patchdock(Structs, [a + 1 for a in Anchors], min_value, max_value, 1000, 2.0)
+        Num_Results = utils.patchdock(Structs, [a + 1 for a in Anchors], min_value, max_value, 1000, 2.0)
         if Num_Results == None:
                 log.write('PatchDock did not find any global docking solution within the geometrical constraints\n')
                 log.close()
@@ -90,7 +90,7 @@ def main(name, argv):
         for s in docking_solutions:
                 suffix.append([s, s.split('.')[1].split('_')])
                 suffix[-1][1] = suffix[-1][1][0] + '_' + str(int(suffix[-1][1][2]))
-        commands = ['python ' + Utils.SCRIPTS_FOL + '/Constrain_Generation.py ../' + Heads[0] + ' ../' + Heads[1] + ' ../' + Linkers + ' ' + s[1] + " " + s[0] + " " + ''.join(Chains) + ' ' + str(Anchors[0]) for s in suffix]
+        commands = ['python ' + utils.SCRIPTS_FOL + '/constraint_generation.py ../' + Heads[0] + ' ../' + Heads[1] + ' ../' + Linkers + ' ' + s[1] + " " + s[0] + " " + ''.join(Chains) + ' ' + str(Anchors[0]) for s in suffix]
         jobs = cluster.runBatchCommands(commands, batch_size=12, mem='4000mb')
         Cluster.wait(jobs)
         
@@ -98,7 +98,7 @@ def main(name, argv):
         log.write('Clustering the top results\n')
         os.system('cat ../Init0.pdb ../Init1.pdb > ../Init.pdb')
         os.chdir('../')
-        os.system('python ' + Utils.SCRIPTS_FOL + '/Clustering.py 1000 200 4 ' + Chains[1])
+        os.system('python ' + utils.SCRIPTS_FOL + '/clustering.py 1000 200 4 ' + Chains[1])
         if os.path.isdir('Results/'):
                 log.write('Clustering is done\n')
         else:

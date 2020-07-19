@@ -6,7 +6,7 @@ from rdkit.Chem import rdMolAlign
 from rdkit.Chem import rdMolTransforms
 from rdkit.Geometry.rdGeometry import Point3D
 from rdkit.Chem.rdchem import Atom
-import Utils
+import utils
 import numpy as np
 import math
 import glob
@@ -14,7 +14,7 @@ import random
 import copy
 
 def get_mcs_sdf(old_sdf, new_sdf, protac):
-    Utils.addH_sdf(old_sdf)
+    utils.addH_sdf(old_sdf)
     OldSdf = Chem.SDMolSupplier(old_sdf)[0]
     if OldSdf == None:
         return None

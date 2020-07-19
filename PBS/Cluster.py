@@ -1,7 +1,7 @@
 import subprocess
 import os
 import sys
-import PyUtils
+import pyutils
 import socket
 import chemfarm_job_submission as cjob
 import chemfarm_job_batch as cbatch
@@ -82,7 +82,7 @@ class Cluster:
                         jobs.append(self.runSingle(command))
                 return jobs
         def runDirSingle(self, dirname, command):
-                PyUtils.create_folder(dirname[:-1])
+                pyutils.create_folder(dirname[:-1])
                 curr = os.getcwd()
                 os.chdir(dirname[:-1])
                 job = self.runSingle(command)

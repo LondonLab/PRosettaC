@@ -1,6 +1,6 @@
-import Utils
+import utils
 import os,sys
-sys.path.append(Utils.SCRIPTS_FOL + 'PBS/')
+sys.path.append(utils.SCRIPTS_FOL + 'PBS/')
 import Cluster
 
 def main(name, argv):
@@ -9,7 +9,7 @@ def main(name, argv):
                 return
 
         cluster = Cluster.Cluster()
-        cluster.runSingle("python " + Utils.SCRIPTS_FOL + 'auto.py ' + argv[0])
+        cluster.runSingle("python " + utils.SCRIPTS_FOL + 'auto.py ' + argv[0])
 
 def print_usage(name):
         print("Usage : " + name + " <param file>")
