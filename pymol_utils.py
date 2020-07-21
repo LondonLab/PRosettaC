@@ -30,7 +30,7 @@ def get_distance(file_name, res1, atom1, res2, atom2):
     cmd.load(file_name)
     cmd.select('atom1', 'resn ' + res1 + ' and name ' + atom1)
     cmd.select('atom2', 'resn ' + res2 + ' and name ' + atom2)
-    print cmd.get_distance('atom1', 'atom2')
+    print(cmd.get_distance('atom1', 'atom2'))
 
 def center_coords(file_name):
     pymol.finish_launching()
@@ -123,7 +123,7 @@ def env_cysteine(file_name, allowed_het):
             for r in resi:
                 entry = [c for c in res_chain if c[0] == r][0]
                 if is_lig_single(h, entry[1]):
-                    print h + '\t' + entry[0] + '\t' + entry[1]
+                    print(h + '\t' + entry[0] + '\t' + entry[1])
                     return_table.append([h, entry[0], entry[1]])
     return return_table
 
@@ -522,7 +522,7 @@ def pymol_mutate(file_name, chain, res_index):
     return True
 
 def show_bumps(selection):
-    print selection
+    print(selection)
     name = 'bump_check'
     cmd.delete(name)
     cmd.create(name, selection, zoom=0)
@@ -568,7 +568,7 @@ asSel (boolean)
     #else:
     cmd.create( tmpObj, objSel + " and polymer");
     if verbose!=False:
-        print "WARNING: I'm setting dot_solvent.  You may not care for this."
+        print("WARNING: I'm setting dot_solvent.  You may not care for this.")
     cmd.set("dot_solvent");
     cmd.get_area(selection=tmpObj, load_b=1)
 
@@ -591,7 +591,7 @@ asSel (boolean)
     randstr = str(random.randint(0,10000))
     selName = "exposed_atm_" + randstr
     if verbose!=False:
-        print "Exposed residues are selected in: " + selName
+        print("Exposed residues are selected in: " + selName)
     cmd.select(selName, objSel + " in " + tmpObj ) 
     selNameRes = "exposed_res_" + randstr
     cmd.select(selNameRes, "byres " + selName )
