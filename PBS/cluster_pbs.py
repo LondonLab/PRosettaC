@@ -29,7 +29,7 @@ def wait(job_ids, timeout = -1):
                         print("Not done yet")
                 i += 1
 
-class Cluster:
+class cluster_pbs:
         def __init__(self):
                 self.typ = "CHEM"
 

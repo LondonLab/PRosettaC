@@ -31,7 +31,7 @@ def get_mcs_sdf(old_sdf, new_sdf, protac):
     rwmol.AddConformer(rwconf)
     writer = Chem.SDWriter(new_sdf)
     writer.write(rwmol)
-    NewSdf = Chem.SDMolSupplier(new_sdf, sanitize=False)[0]
+    NewSdf = Chem.SDMolSupplier(new_sdf, sanitize=True)[0]
     Matches = NewSdf.GetSubstructMatches(NewSdf, uniquify=False)
     if len(Matches) == 0:
         return None
