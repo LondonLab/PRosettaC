@@ -21,14 +21,20 @@ def main(name, argv):
                 LIG = f.readline().split(':')[1].split()
                 Linkers = f.readline().split(':')[1].split()[0]
                 Full = f.readline().split(':')[1].split()[0] == 'True'
-        with open(Linkers, 'r') as f:
-                protac = f.readline().split()[0]
+        if '.smi' in Linkers:
+                with open(Linkers, 'r') as f:
+                        protac = f.readline().split()[0]
+        else:
+                protac = Linkers
         Structs = ['StructA.pdb', 'StructB.pdb']
         Heads = ['HeadA.sdf', 'HeadB.sdf']
         Subs = ['SubA.sdf', 'SubB.sdf']
         Chains = ['A', 'B']
         Anchors = []
         for i in [0,1]:
+                if not '.pdb' in PDB[i] and '.sdf' in LIG[i]:
+                        log.write('ERROR: An .sdf file can only be chosen is a corresponding .pdb file is chosen\n')
+                        sys.exit()
                 if not pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i]):
                         log.write('ERROR: At least one .sdf file is close to zero or multiple chains in its appropriate .pdb file\n')
                         sys.exit()

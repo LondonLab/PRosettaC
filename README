@@ -21,6 +21,7 @@ python extended.py/short.py Protac_params.txt
 
 Protac_param.txt will include the input files and should look like this:
 
+/////////////////////////////
 For main.py / extended.py:
 Structures: StructA.pdb StructB.pdb
 Chains: A B
@@ -28,14 +29,7 @@ Heads: HeadA.sdf HeadB.sdf
 Anchor atoms: 11 23
 Protac: protac.smi
 Full: True
-
-For auto.py / short.py:
-PDB: PDB_ID1 PDB_ID2
-LIG: LIG_ID1 LIG_ID2
-PROTAC: protac.smi
-Full: True
-
-Use "Full: True" for a full and long run, and "Full: False" for a shorter run of lower quality, with less global and local docking runs
+////////////////////////////
 
 Details of files for the extended version:
 StructA.pdb is the structure of the E3 ligase (e.g. CRBN)
@@ -45,8 +39,29 @@ HeadA.sdf is the E3 ligase binder (e.g. thalidomide)
 HeadB.sdf is the target binder (e.g. JQ1)
 Both HeadA and HeadB should be positioned in their appropriate binding modes within StructA and StructB.
 Anchor atoms is the number of the anchor atoms within HeadA and HeadB. An easy way to find the number of a desired atom is to open HeadA.sdf in pymol, press the L button in the toolbar, then choose "atom identifiers", and "ID". Just make sure that the anchor should be >= 1, so in case the numbering in pymol starts from 0, add one to the number of the chosen atom. The anchor atoms must be uniquely defined in the smiles representation of the molecule.
+
+/////////////////////////////
+For auto.py / short.py:
+PDB: PDB_ID1 PDB_ID2
+LIG: LIG_ID1 LIG_ID2
+PROTAC: protac.smi
+Full: True
+/////////////////////////////
+
+For a more flexible run with .pdb or .sdf file instead of the PDB or LIG IDs, for either one or both proteins, use auto.py / short.py:
+
+/////////////////////////////
+PDB: [PDB_ID1 ; pdb1.pdb] [PDB_ID2 ; pdb2.pdb]
+LIG: [LIG_ID1 ; lig1.sdf] [LIG_ID2 ; lig2.sdf]
+PROTAC: [SMILES_STRING ; protac.smi]
+Full: True
+/////////////////////////////
+
+NOTES: 
+[X ; Y] means that either one could be chosen. The only requirement is that .sdf file cannot be chosen along with PDB_ID.
 protac.smi is a file with a single line which is the smiles representation of the full PROTAC.
-NOTE: due to a reserved name, the params file must not be called params.txt.
+Due to a reserved name, the params file must not be called params.txt.
+Use "Full: True" for a full and long run, and "Full: False" for a shorter run of lower quality, with less global and local docking runs
 
 Authors:
 Daniel Zaidman, Nir London
