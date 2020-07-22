@@ -130,6 +130,8 @@ def env_cysteine(file_name, allowed_het):
 def get_rec_plus_lig(pdb_id, lig, rec_file, lig_file, new_chain):
     pymol.finish_launching()
     cmd.delete('all')
+    if '.sdf' in lig:
+        cmd.load(lig)
     if '.pdb' in pdb_id:
         cmd.load(pdb_id)
         center_coords_rec(pdb_id.split('.')[0])
@@ -140,7 +142,6 @@ def get_rec_plus_lig(pdb_id, lig, rec_file, lig_file, new_chain):
     stored.list=[]
     sdf = '.sdf' in lig
     if sdf:
-        cmd.load(lig)
         cmd.select('lig', lig.split('.')[0])
         cmd.select('env', 'poly and br. lig around 5')
         cmd.iterate('env', "stored.list.append((chain))")
