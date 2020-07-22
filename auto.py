@@ -29,7 +29,9 @@ def main(name, argv):
         Chains = ['A', 'B']
         Anchors = []
         for i in [0,1]:
-                pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i])
+                if not pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i]):
+                        log.write('ERROR: At least one .sdf file is close to zero or multiple chains in its appropriate .pdb file\n')
+                        sys.exit()
                 Anchors.append(pl.get_mcs_sdf(Heads[i], Subs[i], protac))
                 if Anchors[i] == None:
                         log.write('ERROR: There is some problem with the PDB ligand ' + LIG[i] + '. It could be either one of the following options: the ligand is not readable by RDKit, the MCS (maximal common substructure) between the PROTAC smiles and ' + LIG[i] + ' ligand does not have an anchor atom which is uniquly defined in regard to smiles, or there is a different problem regarding substructure match. Try to choose a different PDB template, or use the manual option, supplying your own .sdf files.\n')
