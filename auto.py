@@ -14,8 +14,8 @@ def main(name, argv):
 
         log = open('log.txt', 'w', buffering=1)
         cluster = cluster_pbs.cluster_pbs()
-        log.write('PRosettaC run has started\n')
-        log.write('Processing inputs\n')
+        log.write('INFO: PRosettaC run has started\n')
+        log.write('INFO: Processing inputs\n')
         with open(argv[0], 'r') as f:
                 PDB = f.readline().split(':')[1].split()
                 LIG = f.readline().split(':')[1].split()
@@ -31,11 +31,11 @@ def main(name, argv):
                 pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i])
                 Anchors.append(pl.get_mcs_sdf(Heads[i], Subs[i], protac))
                 if Anchors[i] == None:
-                        log.write('There is some problem with the PDB ligand ' + LIG[i] + '. It could be either one of the following options: the ligand is not readable by RDKit, the MCS (maximal common substructure) between the PROTAC smiles and ' + LIG[i] + ' ligand does not have an anchor atom which is uniquly defined in regard to smiles, or there is a different problem regarding substructure match. Try to choose a different PDB template, or use the manual option, supplying your own .sdf files.\n')
+                        log.write('ERROR: There is some problem with the PDB ligand ' + LIG[i] + '. It could be either one of the following options: the ligand is not readable by RDKit, the MCS (maximal common substructure) between the PROTAC smiles and ' + LIG[i] + ' ligand does not have an anchor atom which is uniquly defined in regard to smiles, or there is a different problem regarding substructure match. Try to choose a different PDB template, or use the manual option, supplying your own .sdf files.\n')
                         log.close()
                         sys.exit()
         Heads = Subs
-        log.write('Cleaning structures, adding hydrogens to binders and running relax\n')
+        log.write('INFO: Cleaning structures, adding hydrogens to binders and running relax\n')
         PT_params = []
         for i in [0, 1]:
                 #Adding hydrogens to the heads (binders)
@@ -60,7 +60,7 @@ def main(name, argv):
                 Structs[i] = 'Init' + str(i) + '.pdb'
         
         #Generate up to 200 conformations of PROTAC conformations for each anchor distance within bins
-        log.write('Sampling the distance between the two anchor points\n')
+        log.write('INFO: Sampling the distance between the two anchor points\n')
         (min_value, max_value) = pl.SampleDist(Heads, Anchors, Linkers)
         if (min_value, max_value) == (None, None):
                 log.write('There is a problem with finding substructure between the .sdf file and the SMILES of the full protac. Try giving the sdf files manually.\n')
@@ -68,23 +68,25 @@ def main(name, argv):
                 sys.exit()
 
         #PatchDock
-        log.write('Running PatchDock with the constrains\n')
+        log.write('INFO: Running PatchDock with the constrains\n')
         Num_Results = utils.patchdock(Structs, [a + 1 for a in Anchors], min_value, max_value, 1000, 2.0)
         if Num_Results == None:
-                log.write('PatchDock did not find any global docking solution within the geometrical constraints\n')
+                log.write('INFO: PatchDock did not find any global docking solution within the geometrical constraints\n')
+                log.write('INFO: PRosettaC run has finished\n')
                 log.close()
                 sys.exit()
 
         #Rosetta Local Docking
-        log.write('Run Rosetta local docking on the top 1000 PatchDock results\n')
+        log.write('INFO: Run Rosetta local docking on the top 1000 PatchDock results\n')
         curr_dir = os.getcwd()
         os.chdir('Patchdock_Results/')
         commands = [rs.local_docking('pd.' + str(i + 1) + '.pdb', Chains[0] + 'X', Chains[1] + 'Y', curr_dir + '/' + PT_params[0], curr_dir + '/' + PT_params[1]) for i in range(Num_Results)]
         jobs = cluster.runBatchCommands(commands, mem='8000mb')
+        log.write('INFO: Local docking jobs: ' + str(jobs) + '\n')
         cluster_pbs.wait(jobs)
 
         #Generating 100 constrained conformations for the entire linker based on PatchDock results
-        log.write('Generating up to 100 constrained conformations for each local docking results\n')
+        log.write('INFO: Generating up to 100 constrained conformations for each local docking results\n')
         docking_solutions = glob.glob('*_docking_????.pdb')
         suffix = []
         for s in docking_solutions:
@@ -92,18 +94,19 @@ def main(name, argv):
                 suffix[-1][1] = suffix[-1][1][0] + '_' + str(int(suffix[-1][1][2]))
         commands = ['python ' + utils.SCRIPTS_FOL + '/constraint_generation.py ../' + Heads[0] + ' ../' + Heads[1] + ' ../' + Linkers + ' ' + s[1] + " " + s[0] + " " + ''.join(Chains) + ' ' + str(Anchors[0]) for s in suffix]
         jobs = cluster.runBatchCommands(commands, batch_size=12, mem='4000mb')
+        log.write('INFO: Constrained conformation generation jobs: ' + str(jobs) + '\n')
         cluster_pbs.wait(jobs)
         
         #Clustering the top 200 local docking models (according to interface RMSD), out of 1000 final scoring models
-        log.write('Clustering the top results\n')
+        log.write('INFO: Clustering the top results\n')
         os.system('cat ../Init0.pdb ../Init1.pdb > ../Init.pdb')
         os.chdir('../')
         os.system('python ' + utils.SCRIPTS_FOL + '/clustering.py 1000 200 4 ' + Chains[1])
         if os.path.isdir('Results/'):
-                log.write('Clustering is done\n')
+                log.write('INFO: Clustering is done\n')
         else:
-                log.write('No models have been created\n')
-        log.write('PRosettaC run is Done\n')
+                log.write('INFO: No models have been created\n')
+        log.write('INFO: PRosettaC run has finished\n')
         log.close()
 
 def print_usage(name):
