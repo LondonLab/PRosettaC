@@ -20,6 +20,7 @@ def main(name, argv):
                 PDB = f.readline().split(':')[1].split()
                 LIG = f.readline().split(':')[1].split()
                 Linkers = f.readline().split(':')[1].split()[0]
+                Full = f.readline().split(':')[1].split()[0] == 'True'
         with open(Linkers, 'r') as f:
                 protac = f.readline().split()[0]
         Structs = ['StructA.pdb', 'StructB.pdb']
@@ -63,13 +64,17 @@ def main(name, argv):
         log.write('INFO: Sampling the distance between the two anchor points\n')
         (min_value, max_value) = pl.SampleDist(Heads, Anchors, Linkers)
         if (min_value, max_value) == (None, None):
-                log.write('There is a problem with finding substructure between the .sdf file and the SMILES of the full protac. Try giving the sdf files manually.\n')
+                log.write('ERROR: There is a problem with finding substructure between the .sdf file and the SMILES of the full protac. Try giving the sdf files manually.\n')
                 log.close()
                 sys.exit()
 
         #PatchDock
         log.write('INFO: Running PatchDock with the constrains\n')
-        Num_Results = utils.patchdock(Structs, [a + 1 for a in Anchors], min_value, max_value, 1000, 2.0)
+        if Full:
+                Global = 1000
+        else:
+                Global = 500
+        Num_Results = utils.patchdock(Structs, [a + 1 for a in Anchors], min_value, max_value, Global, 2.0)
         if Num_Results == None:
                 log.write('INFO: PatchDock did not find any global docking solution within the geometrical constraints\n')
                 log.write('INFO: PRosettaC run has finished\n')
@@ -80,7 +85,11 @@ def main(name, argv):
         log.write('INFO: Run Rosetta local docking on the top 1000 PatchDock results\n')
         curr_dir = os.getcwd()
         os.chdir('Patchdock_Results/')
-        commands = [rs.local_docking('pd.' + str(i + 1) + '.pdb', Chains[0] + 'X', Chains[1] + 'Y', curr_dir + '/' + PT_params[0], curr_dir + '/' + PT_params[1]) for i in range(Num_Results)]
+        if Full:
+                Local = 50
+        else:
+                Local = 10
+        commands = [rs.local_docking('pd.' + str(i + 1) + '.pdb', Chains[0] + 'X', Chains[1] + 'Y', curr_dir + '/' + PT_params[0], curr_dir + '/' + PT_params[1], Local) for i in range(Num_Results)]
         jobs = cluster.runBatchCommands(commands, mem='8000mb')
         log.write('INFO: Local docking jobs: ' + str(jobs) + '\n')
         cluster_pbs.wait(jobs)
@@ -110,7 +119,7 @@ def main(name, argv):
         log.close()
 
 def print_usage(name):
-        print("Usage : " + name + " <params file>\n\nFile should look like this:\nPDB_ID: PDB_A PDB_B\nLIG_ID: LIG_A lig_B\nProtac: Linkers.smi\n")
+        print("Usage : " + name + " <params file>\n\nFile should look like this:\nPDB_ID: PDB_A PDB_B\nLIG_ID: LIG_A lig_B\nProtac: Linkers.smi\nFull: True\n")
         print("The param file must not be called params.txt, since this is a conserved name\n")
 if __name__ == "__main__":
     main(sys.argv[0], sys.argv[1:])

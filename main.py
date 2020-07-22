@@ -21,6 +21,7 @@ def main(name, argv):
                 Heads = f.readline().split(':')[1].split()
                 Anchors = [int(i) - 1 for i in f.readline().split(':')[1].split()]
                 Linkers = f.readline().split(':')[1].split()[0]
+                Full = f.readline().split(':')[1].split()[0] == 'True'
         log.write('INFO: Cleaning structures, adding hydrogens to binders and running relax\n')
         PT_params = []
         for i in [0, 1]:
@@ -55,7 +56,11 @@ def main(name, argv):
 
         #PatchDock
         log.write('INFO: Running PatchDock with the constrains\n')
-        Num_Results = utils.patchdock(Structs, [a + 1 for a in Anchors], min_value, max_value, 1000, 2.0)
+        if Full:
+                Global = 1000
+        else:
+                Global = 500
+        Num_Results = utils.patchdock(Structs, [a + 1 for a in Anchors], min_value, max_value, Global, 2.0)
         if Num_Results == None:
                 log.write('INFO: PatchDock did not find any global docking solution within the geometrical constraints\n')
                 log.write('INFO: PRosettaC run has finished\n')
@@ -66,7 +71,11 @@ def main(name, argv):
         log.write('INFO: Run Rosetta local docking on the top 1000 PatchDock results\n')
         curr_dir = os.getcwd()
         os.chdir('Patchdock_Results/')
-        commands = [rs.local_docking('pd.' + str(i + 1) + '.pdb', Chains[0] + 'X', Chains[1] + 'Y', curr_dir + '/' + PT_params[0], curr_dir + '/' + PT_params[1]) for i in range(Num_Results)]
+        if Full:
+                Local = 50
+        else:
+                Local = 10
+        commands = [rs.local_docking('pd.' + str(i + 1) + '.pdb', Chains[0] + 'X', Chains[1] + 'Y', curr_dir + '/' + PT_params[0], curr_dir + '/' + PT_params[1], Local) for i in range(Num_Results)]
         jobs = cluster.runBatchCommands(commands, mem='8000mb')
         log.write('INFO: Local docking jobs: ' + str(jobs) + '\n')
         cluster_pbs.wait(jobs)
@@ -96,7 +105,7 @@ def main(name, argv):
         log.close()
 
 def print_usage(name):
-        print("Usage : " + name + " <params file>\n\nFile should look like this:\nStrctures: StructA.pdb StructB.pdb\nChains: ChainsA ChainsB\nHeads: HeadA.sdf HeadB.sdf\nAnchor atoms: 6 6\nLinkers: Linkers.smi\n")
+        print("Usage : " + name + " <params file>\n\nFile should look like this:\nStrctures: StructA.pdb StructB.pdb\nChains: ChainsA ChainsB\nHeads: HeadA.sdf HeadB.sdf\nAnchor atoms: 6 6\nLinkers: Linkers.smi\nFull: True\n")
         print("Note: In the structures, head should come first\n")
         print("The param file must not be called params.txt, since this is a conserved name\n")
 if __name__ == "__main__":

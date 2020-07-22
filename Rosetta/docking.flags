@@ -11,4 +11,4 @@
 -out
 	-suffix _docking    				#Adds a suffix "_full" to the end of outputs
 -load_PDB_components false
--nstruct 50
+#-nstruct 50

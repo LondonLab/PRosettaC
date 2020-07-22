@@ -27,11 +27,15 @@ Chains: A B
 Heads: HeadA.sdf HeadB.sdf
 Anchor atoms: 11 23
 Protac: protac.smi
+Full: True
 
 For auto.py / short.py:
 PDB: PDB_ID1 PDB_ID2
 LIG: LIG_ID1 LIG_ID2
 PROTAC: protac.smi
+Full: True
+
+Use "Full: True" for a full and long run, and "Full: False" for a shorter run of lower quality, with less global and local docking runs
 
 Details of files for the extended version:
 StructA.pdb is the structure of the E3 ligase (e.g. CRBN)

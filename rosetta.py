@@ -45,5 +45,5 @@ def relax(struct, sdf_params, interface = False, n = 1):
         os.system(SCRIPTS + " -s " + struct + " -parser:protocol " + FOLDER + "flex_relax.xml @" + FOLDER + "relax.flags -extra_res_fa " + sdf_params + " -overwrite -nstruct " + str(n))
 
 #run a local docking protocol
-def local_docking(struct, chainsA, chainsB, ptA_params, ptB_params):
-    return SCRIPTS + " -s " + struct + " -parser:protocol " + FOLDER + "docking.xml @" + FOLDER + "docking.flags @" + FOLDER + "relax.flags -extra_res_fa " + ptA_params + " -extra_res_fa " + ptB_params + " -partners " + chainsA + "_" + chainsB + " -scorefile local.fasc -overwrite"
+def local_docking(struct, chainsA, chainsB, ptA_params, ptB_params, nstruct = 50):
+    return SCRIPTS + " -s " + struct + " -parser:protocol " + FOLDER + "docking.xml @" + FOLDER + "docking.flags @" + FOLDER + "relax.flags -extra_res_fa " + ptA_params + " -extra_res_fa " + ptB_params + " -partners " + chainsA + "_" + chainsB + " -scorefile local.fasc -nstruct " + str(nstruct) + " -overwrite"
