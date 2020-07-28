@@ -8,7 +8,6 @@
 
 import os,sys,shutil
 import protac_lib as pl
-import Rosetta as rs
 import glob
 import math
 from sklearn.cluster import DBSCAN
