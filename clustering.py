@@ -29,6 +29,8 @@ def main(name, argv):
         with open('score.sc', 'r') as f:
                 local_lines = [line.split() for line in f][2:]
         local_lines = [line for line in local_lines if float(line[1]) < 0]
+        if len(local_lines) == 0:
+                return
         local_lines.sort(key=lambda x: float(x[1]))
         local_lines = local_lines[:top_sc]
         top_files = [((line[-1] + '.pdb').split('_'), float(line[1])) for line in local_lines]
