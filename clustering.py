@@ -52,11 +52,18 @@ def main(name, argv):
         #Clustering
         os.chdir(top_folder)
         shutil.copyfile('../Init.pdb', './Init.pdb')
-        rank, big_clusters = apply_DBSCAN('Init.pdb', local_files, chain, RMSD)
-        with open('rank.txt', 'w') as f:
-                f.write(str(rank) + '\n')
-        with open('big_clusters.txt', 'w') as f:
-                f.write(str(big_clusters) + '\n')
+        rank, big_clusters, num_labels = apply_DBSCAN('Init.pdb', local_files, chain, RMSD)
+        os.remove('Init.pdb')
+        with open('../result_summary.txt', 'w') as f:
+                f.write(str(len(local_files)) + ' top final models were clustered.\n')
+                f.write(str(num_labels) + ' clusters were generated.\n')
+                f.write('Out of them ' + str(big_clusters) + ' have at least 5 members.\n')
+        #Uncomment to write the rank of the top native cluster (when starting with a native complex)
+        #with open('rank.txt', 'w') as f:
+        #        f.write(str(rank) + '\n')
+        #Uncomment to write the number of clusters with size above the cls_size_threshold, default=5
+        #with open('big_clusters.txt', 'w') as f:
+        #        f.write(str(big_clusters) + '\n')
         os.chdir('../')
 
 def apply_DBSCAN(native, names, chain, threshold, cls_size_threshold=5):
@@ -124,7 +131,7 @@ def apply_DBSCAN(native, names, chain, threshold, cls_size_threshold=5):
                 with open('cluster' + str(i + 1) + '/avg.txt', 'w') as f:
                         f.write(str(-1 * c[1]) + '\n')
         
-        return rank, big_clusters
+        return rank, big_clusters, num_labels
 
 def print_usage(name):
         print("Usage : " + name + " <top_score> <top_local> <RMSD> <chain>")
