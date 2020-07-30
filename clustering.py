@@ -130,8 +130,9 @@ def apply_DBSCAN(native, names, chain, threshold, cls_size_threshold=5):
                 os.rename(c[3], 'cluster' + str(i + 1))
                 if c[0] >= cls_size_threshold:
                         big_clusters += 1
-                with open('cluster' + str(i + 1) + '/avg.txt', 'w') as f:
-                        f.write(str(-1 * c[1]) + '\n')
+                #Uncomment to write the average final score of each cluster
+                #with open('cluster' + str(i + 1) + '/avg.txt', 'w') as f:
+                #        f.write(str(-1 * c[1]) + '\n')
         
         return rank, big_clusters, num_labels
 
