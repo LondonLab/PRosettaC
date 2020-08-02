@@ -8,7 +8,7 @@ conda install -c rdkit rdkit
 conda install -c anaconda numpy
 conda install -c schrodinger pymol
 
-3. Download and Install OpenBabel (http://openbabel.org/wiki/Main_Page), PatchDock (https://bioinfo3d.cs.tau.ac.il/PatchDock/) and Rosetta (https://www.rosettacommons.org/). The Rosetta versino that was used in this study is: 2019-07-18.
+3. Download and Install OpenBabel (http://openbabel.org/wiki/Main_Page), PatchDock (https://bioinfo3d.cs.tau.ac.il/PatchDock/) and Rosetta (https://www.rosettacommons.org/). The Rosetta versino that was used in this study is: 2019.27.post.dev+132.master.966c9eb 966c9eb6b3ab993de7aa3af5988125b7c2e464af git@github.com:RosettaCommons/main.git 2019-07-18T11:43:25.
 
 4. Our scripts rely on the PBS job scheduler (https://en.wikipedia.org/wiki/Portable_Batch_System).
 
