@@ -32,6 +32,7 @@ def main(name, argv):
         if len(local_lines) == 0:
                 return
         local_lines.sort(key=lambda x: float(x[1]))
+        final_models_num = len(local_lines)
         local_lines = local_lines[:top_sc]
         top_files = [((line[-1] + '.pdb').split('_'), float(line[1])) for line in local_lines]
         for (i, j) in top_files:
@@ -39,8 +40,10 @@ def main(name, argv):
         top_files = [('pd.' + i[1] + '_docking_' + i[2], j) for (i, j) in top_files]
         local_files = []
         for (i, j) in top_files:
-                with open('local.fasc', 'r') as local:        
-                        for line in local:
+                with open('local.fasc', 'r') as local:
+                        lines = local.readlines()
+                        num_local_docking = len(lines)
+                        for line in lines:
                                 if i in line:
                                         tmp_line = line.split()
                         local_files.append((tmp_line, j))
@@ -57,6 +60,8 @@ def main(name, argv):
         rank, big_clusters, num_labels = apply_DBSCAN('Init.pdb', local_files, chain, RMSD)
         os.remove('Init.pdb')
         with open('../result_summary.txt', 'w') as f:
+                f.write(str(num_local_docking) + ' local docking solutions were generated.\n')
+                f.write(str(final_models_num) + ' final models with energy below the thresold (0) were generated.\n')
                 f.write(str(len(local_files)) + ' top final models were clustered.\n')
                 f.write(str(num_labels) + ' clusters were generated.\n')
                 f.write('Out of them ' + str(big_clusters) + ' have at least 5 members.\n')
