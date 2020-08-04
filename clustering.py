@@ -61,7 +61,7 @@ def main(name, argv):
         os.remove('Init.pdb')
         with open('../result_summary.txt', 'w') as f:
                 f.write(str(num_local_docking) + ' local docking solutions were generated.\n')
-                f.write(str(final_models_num) + ' final models with energy below the thresold (0) were generated.\n')
+                f.write(str(final_models_num) + ' final models with energy below the threshold (0) were generated.\n')
                 f.write(str(len(local_files)) + ' top final models were clustered.\n')
                 f.write(str(num_labels) + ' clusters were generated.\n')
                 f.write('Out of them ' + str(big_clusters) + ' have at least 5 members.\n')
