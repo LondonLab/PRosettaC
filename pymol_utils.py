@@ -130,20 +130,25 @@ def env_cysteine(file_name, allowed_het):
 def get_rec_plus_lig(pdb_id, lig, rec_file, lig_file, new_chain):
     pymol.finish_launching()
     cmd.delete('all')
-    if '.sdf' in lig:
+    sdf = '.sdf' in lig
+    if sdf:
         cmd.load(lig)
+        lig_sele = lig.split('.')[0] + '_sele'
+    else:
+        lig_sele = 'lig'
     if '.pdb' in pdb_id:
+        pdb_name = pdb_id.split('.')[0]
         cmd.load(pdb_id)
-        center_coords_rec(pdb_id.split('.')[0])
+        center_coords_rec(pdb_name)
+        rec_sele = pdb_name + '_sele'
     else:
         cmd.fetch(pdb_id)
         center_coords_rec(pdb_id)
-    #cmd.select('lig', 'resn lig')
+        rec_sele = 'rec'
     stored.list=[]
-    sdf = '.sdf' in lig
     if sdf:
-        cmd.select('lig', lig.split('.')[0])
-        cmd.select('env', 'poly and br. lig around 5')
+        cmd.select(lig_sele, lig.split('.')[0])
+        cmd.select('env', 'poly and br. ' + lig_sele + ' around 5')
         cmd.iterate('env', "stored.list.append((chain))")
         chain = list(set(stored.list))
         if not len(chain) == 1:
@@ -152,11 +157,11 @@ def get_rec_plus_lig(pdb_id, lig, rec_file, lig_file, new_chain):
     else:
         cmd.iterate('resn ' + lig, "stored.list.append((chain))")
         chain = list(set(stored.list))[0][0]
-        cmd.select('lig', 'resn ' + lig + ' and chain ' + chain)
-    cmd.select('rec', 'poly and chain ' + chain)
-    cmd.alter('rec', 'chain=\'' + new_chain + '\'')
-    cmd.save(lig_file, 'lig')
-    cmd.save(rec_file, 'rec')
+        cmd.select(lig_sele, 'resn ' + lig + ' and chain ' + chain)
+    cmd.select(rec_sele, 'poly and chain ' + chain)
+    cmd.alter(rec_sele, 'chain=\'' + new_chain + '\'')
+    cmd.save(lig_file, lig_sele)
+    cmd.save(rec_file, rec_sele)
     os.system('rm *.cif')
     return True
 
