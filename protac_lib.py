@@ -189,10 +189,13 @@ def SampleDist(Heads, Anchors, Linkers, n = 200, output_hist="initial_distances.
         for i in histogram:
             sum_mul += i * histogram[i]
             sum_his += histogram[i]
-        avg_index = 1.0 * sum_mul / sum_his
-        threshold = max_value * hist_threshold
-        high_values = [i for i in histogram if histogram[i] >= threshold]
-        return(min(min(high_values), avg_index - min_margin), max(max(high_values), avg_index + min_margin))
+        if sum_his == 0:
+            return (0,0)
+        else:
+            avg_index = 1.0 * sum_mul / sum_his
+            threshold = max_value * hist_threshold
+            high_values = [i for i in histogram if histogram[i] >= threshold]
+            return(min(min(high_values), avg_index - min_margin), max(max(high_values), avg_index + min_margin))
 
 #generate n random conformations for each smile in linkers_file
 #this is an old function and is not used in the final pipeline
