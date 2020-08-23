@@ -53,6 +53,10 @@ def main(name, argv):
                 log.write('ERROR: There is a problem with finding substructure between the .sdf file and the SMILES of the full protac.\n')
                 log.close()
                 sys.exit()
+        if min_value <= 0 or max_value <= 2:
+                log.write('ERROR: There is a problem with generating protac conformations to sample the anchor distance. Please check that both .sdf files are in a bound conformation to their appropriate structures and that this conformation is valid.\n')
+                log.close()
+                sys.exit()
 
         #PatchDock
         log.write('INFO: Running PatchDock with the constrains\n')
