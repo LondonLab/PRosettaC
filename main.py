@@ -50,7 +50,7 @@ def main(name, argv):
         log.write('INFO: Sampling the distance between the two anchor points\n')
         (min_value, max_value) = pl.SampleDist(Heads, Anchors, Linkers)
         if (min_value, max_value) == (None, None):
-                log.write('ERROR: There is a problem with finding substructure between the .sdf file and the SMILES of the full protac.\n')
+                log.write('ERROR: There is a problem with finding substructure between the .sdf file and the SMILES of the full protac. Please check that your .sdf files have the right conformations.\n')
                 log.close()
                 sys.exit()
         if (min_value, max_value) == (0, 0):

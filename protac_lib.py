@@ -147,7 +147,7 @@ def SampleDist(Heads, Anchors, Linkers, n = 200, output_hist="initial_distances.
         else:
             head_A_list = linker.GetSubstructMatches(HeadA, uniquify=False)
             head_B_list = linker.GetSubstructMatches(HeadB, uniquify=False)
-            if head_A_list == None or head_B_list == None:
+            if len(head_A_list) == 0 or len(head_B_list) == 0:
                 return (None, None)
         histogram = {}
         seed  = 0
