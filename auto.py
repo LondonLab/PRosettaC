@@ -36,7 +36,7 @@ def main(name, argv):
                         log.write('ERROR: An .sdf file can only be chosen is a corresponding .pdb file is chosen\n')
                         sys.exit()
                 if not pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i]):
-                        log.write('ERROR: At least one .sdf file is close to zero or multiple chains in its appropriate .pdb file\n')
+                        log.write('ERROR: Each .sdf file should be close to exactly one protein chain in its appropriate .pdb file. At least one .sdf file is close to either none or multiple chains.\n')
                         sys.exit()
                 Anchors.append(pl.get_mcs_sdf(Heads[i], Subs[i], protac))
                 if Anchors[i] == None:
