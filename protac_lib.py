@@ -19,9 +19,14 @@ def get_mcs_sdf(old_sdf, new_sdf, protac):
     if OldSdf == None:
         return None
     PROTAC = Chem.MolFromSmiles(protac)
-    mcs = rdFMCS.FindMCS([OldSdf, PROTAC], ringMatchesRingOnly=True, completeRingsOnly=True)
+    print(Chem.MolToSmiles(OldSdf))
+    print(Chem.MolToSmiles(PROTAC))
+    mcs = rdFMCS.FindMCS([OldSdf, PROTAC], ringMatchesRingOnly=False, completeRingsOnly=False)
+    print(mcs.smartsString)
     mcs_patt = Chem.MolFromSmarts(mcs.smartsString)
-    if mcs_patt.GetNumHeavyAtoms() < OldSdf.GetNumHeavyAtoms() * 0.5:
+    print(mcs_patt.GetNumHeavyAtoms())
+    print(OldSdf.GetNumHeavyAtoms())
+    if mcs_patt.GetNumHeavyAtoms() < OldSdf.GetNumHeavyAtoms() * 0.6:
         return None
     rwmol = Chem.RWMol(mcs_patt)
     rwconf = Chem.Conformer(rwmol.GetNumAtoms())
@@ -31,8 +36,11 @@ def get_mcs_sdf(old_sdf, new_sdf, protac):
     rwmol.AddConformer(rwconf)
     writer = Chem.SDWriter(new_sdf)
     writer.write(rwmol)
-    NewSdf = Chem.SDMolSupplier(new_sdf, sanitize=True)[0]
+    NewSdf = Chem.SDMolSupplier(new_sdf, sanitize=False)[0]
+    NewSdf = Chem.MolFromSmarts(Chem.MolToSmarts(NewSdf))
+    print(Chem.MolToSmiles(NewSdf))
     Matches = NewSdf.GetSubstructMatches(NewSdf, uniquify=False)
+    print(Matches)
     if len(Matches) == 0:
         return None
     elif len(Matches) == 1:
@@ -50,9 +58,12 @@ def get_mcs_sdf(old_sdf, new_sdf, protac):
     return None
 
 def translate_anchors(old_sdf, new_sdf, old_anchor):
-    OldSdf = Chem.SDMolSupplier(old_sdf, sanitize=True)[0]
+    OldSdf = Chem.SDMolSupplier(old_sdf, sanitize=False)[0]
     NewSdf = Chem.SDMolSupplier(new_sdf, sanitize=True)[0]
+    print(Chem.MolToSmiles(OldSdf))
+    print(Chem.MolToSmiles(NewSdf))
     NewMatch = NewSdf.GetSubstructMatch(OldSdf)
+    print(NewMatch)
     return NewMatch[old_anchor]
 
 def rmsd(query, ref, q_match, r_match):
@@ -145,8 +156,19 @@ def SampleDist(Heads, Anchors, Linkers, n = 200, output_hist="initial_distances.
             head_A = linker.GetSubstructMatches(HeadA)[0]
             head_B = linker.GetSubstructMatches(HeadB)[1]
         else:
-            head_A_list = linker.GetSubstructMatches(HeadA, uniquify=False)
-            head_B_list = linker.GetSubstructMatches(HeadB, uniquify=False)
+            mcs_A = rdFMCS.FindMCS([linker, HeadA])
+            mcs_patt_A = Chem.MolFromSmarts(mcs_A.smartsString)
+            mcs_B = rdFMCS.FindMCS([linker, HeadB])
+            mcs_patt_B = Chem.MolFromSmarts(mcs_B.smartsString)
+            #head_A_list = linker.GetSubstructMatches(HeadA, uniquify=False)
+            head_A_list = linker.GetSubstructMatches(mcs_patt_A, uniquify=False)
+            head_A_inner = HeadA.GetSubstructMatch(mcs_patt_A)
+            #head_B_list = linker.GetSubstructMatches(HeadB, uniquify=False)
+            head_B_list = linker.GetSubstructMatches(mcs_patt_B, uniquify=False)
+            head_B_inner = HeadB.GetSubstructMatch(mcs_patt_B)
+            print(Chem.MolToSmiles(linker))
+            print(Chem.MolToSmiles(HeadB))
+            print(head_B_list)
             if len(head_A_list) == 0 or len(head_B_list) == 0:
                 return (None, None)
         histogram = {}
@@ -164,8 +186,8 @@ def SampleDist(Heads, Anchors, Linkers, n = 200, output_hist="initial_distances.
                 randomRotateMol(NewB)
                 translateMol(NewB, Point3D(b, 0, 0), origin)
                 #the constraints for the conformation generation using the two randomized heads
-                cmap = {head_A[i]:NewA.GetConformer().GetAtomPosition(i) for i in range(len(head_A))}
-                cmap.update({head_B[i]:NewB.GetConformer().GetAtomPosition(i) for i in range(len(head_B))})
+                cmap = {head_A[i]:NewA.GetConformer().GetAtomPosition(head_A_inner[i]) for i in range(len(head_A))}
+                cmap.update({head_B[i]:NewB.GetConformer().GetAtomPosition(head_B_inner[i]) for i in range(len(head_B))})
                 #only half of the atoms are required to make the constrained embedding
                 #this is done because using all the atoms sometimes makes it impossible
                 #to find solutions, the half is chosen randomly for each generation
