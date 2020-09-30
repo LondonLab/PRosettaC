@@ -4,8 +4,8 @@ import rosetta as rs
 import utils
 import glob
 import pymol_utils
-sys.path.append(utils.SCRIPTS_FOL + 'PBS/')
-import cluster_pbs
+sys.path.append(utils.SCRIPTS_FOL)
+import cluster as cl
 
 def main(name, argv):
         if not len(argv) == 1:
@@ -13,14 +13,13 @@ def main(name, argv):
                 return
 
         log = open('log.txt', 'w', buffering=1)
-        cluster = cluster_pbs.cluster_pbs()
         log.write('INFO: PRosettaC run has started\n')
         log.write('INFO: Processing inputs\n')
-        with open(argv[0], 'r') as f:
-                PDB = f.readline().split(':')[1].split()
-                LIG = f.readline().split(':')[1].split()
-                Linkers = f.readline().split(':')[1].split()[0]
-                Full = f.readline().split(':')[1].split()[0] == 'True'
+        params = utils.read_params(argv[0])
+        PDB = params['PDB'].split()
+        LIG = params['LIG'].split()
+        Linkers = params['PROTAC'].split()[0]
+        Full = params['Full'].split()[0] == 'True'
         if '.smi' in Linkers:
                 with open(Linkers, 'r') as f:
                         protac = f.readline().split()[0]
@@ -31,6 +30,10 @@ def main(name, argv):
         Subs = ['SubA.sdf', 'SubB.sdf']
         Chains = ['A', 'B']
         Anchors = []
+
+        # Get a handle to the cluster specified in config file. Default to PBS cluster.
+        cluster = cl.getCluster(params['ClusterName'])
+
         for i in [0,1]:
                 if not '.pdb' in PDB[i] and '.sdf' in LIG[i]:
                         log.write('ERROR: An .sdf file can only be chosen is a corresponding .pdb file is chosen\n')
@@ -102,9 +105,9 @@ def main(name, argv):
         else:
                 Local = 10
         commands = [rs.local_docking('pd.' + str(i + 1) + '.pdb', Chains[0] + 'X', Chains[1] + 'Y', curr_dir + '/' + PT_params[0], curr_dir + '/' + PT_params[1], Local) for i in range(Num_Results)]
-        jobs = cluster.runBatchCommands(commands, mem='8000mb')
+        jobs = cluster.runBatchCommands(commands, mem=params['RosettaDockMemory'])
         log.write('INFO: Local docking jobs: ' + str(jobs) + '\n')
-        cluster_pbs.wait(jobs)
+        cluster.wait(jobs)
 
         #Generating 100 constrained conformations for the entire linker based on PatchDock results
         log.write('INFO: Generating up to 100 constrained conformations for each local docking results\n')
@@ -114,9 +117,9 @@ def main(name, argv):
                 suffix.append([s, s.split('.')[1].split('_')])
                 suffix[-1][1] = suffix[-1][1][0] + '_' + str(int(suffix[-1][1][2]))
         commands = ['python ' + utils.SCRIPTS_FOL + '/constraint_generation.py ../' + Heads[0] + ' ../' + Heads[1] + ' ../' + Linkers + ' ' + s[1] + " " + s[0] + " " + ''.join(Chains) for s in suffix]
-        jobs = cluster.runBatchCommands(commands, batch_size=12, mem='4000mb')
+        jobs = cluster.runBatchCommands(commands, batch_size=12, mem=params['ProtacModelMemory'])
         log.write('INFO: Constrained conformation generation jobs: ' + str(jobs) + '\n')
-        cluster_pbs.wait(jobs)
+        cluster.wait(jobs)
         
         #Clustering the top 200 local docking models (according to interface RMSD), out of 1000 final scoring models
         log.write('INFO: Clustering the top results\n')
