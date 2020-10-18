@@ -19,6 +19,7 @@ def main(name, argv):
         with open(argv[0], 'r') as f:
                 PDB = f.readline().split(':')[1].split()
                 LIG = f.readline().split(':')[1].split()
+                print(LIG)
                 Linkers = f.readline().split(':')[1].split()[0]
                 Full = f.readline().split(':')[1].split()[0] == 'True'
         if '.smi' in Linkers:
@@ -51,6 +52,10 @@ def main(name, argv):
                 new_head = Heads[i].split('.')[0] + "_H.sdf"
                 utils.addH_sdf(Heads[i], new_head)
                 Anchors[i] = pl.translate_anchors(Heads[i], new_head, Anchors[i])
+                if Anchors[i] == -1:
+                        log.write('ERROR: There is a problem with the maximal common substructure between the PROTAC and PDB ligand ' + LIG[i] + '.\n')
+                        log.close()
+                        sys.exit()
                 Heads[i] = new_head
                 #Cleaning the structures
                 rs.clean(Structs[i], Chains[i])
