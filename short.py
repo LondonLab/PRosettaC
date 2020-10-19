@@ -1,14 +1,15 @@
 import utils
 import os,sys
-sys.path.append(utils.SCRIPTS_FOL + 'PBS/')
-import cluster_pbs
+sys.path.append(utils.SCRIPTS_FOL)
+import cluster as cl
 
 def main(name, argv):
         if len(argv) != 1:
                 print_usage(name)
                 return
 
-        cluster = cluster_pbs.cluster_pbs()
+        params = utils.read_params(argv[0])
+        cluster = cl.getCluster(params['ClusterName'])
         cluster.runSingle("python " + utils.SCRIPTS_FOL + 'auto.py ' + argv[0])
 
 def print_usage(name):

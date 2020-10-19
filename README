@@ -10,13 +10,22 @@ conda install -c schrodinger pymol
 
 3. Download and Install OpenBabel (http://openbabel.org/wiki/Main_Page), PatchDock (https://bioinfo3d.cs.tau.ac.il/PatchDock/) and Rosetta (https://www.rosettacommons.org/). The Rosetta versino that was used in this study is: 2019.27.post.dev+132.master.966c9eb 966c9eb6b3ab993de7aa3af5988125b7c2e464af git@github.com:RosettaCommons/main.git 2019-07-18T11:43:25.
 
-4. Our scripts rely on the PBS job scheduler (https://en.wikipedia.org/wiki/Portable_Batch_System).
+4. For job scheduling our scripts rely on PBS (https://en.wikipedia.org/wiki/Portable_Batch_System) or Sun Grid Engine/Open Grid Engine (https://en.wikipedia.org/wiki/Oracle_Grid_Engine).
 
-5. Set the following environment parameters: export PATCHDOCK=”/Path_to_PatchDock/”, export OB=”/Path_to_OpenBabel/”, export SCRIPTS_FOL=”/Path_to_the_git_folder/”, export ROSETTA_FOL=”/Path_to_Rosetta/”, PBS_HOME=”/Path_to_PBS_bin_folder/”.
+5. Set the following environment parameters: export PATCHDOCK=”/Path_to_PatchDock/”, export OB=”/Path_to_OpenBabel/”, export SCRIPTS_FOL=”/Path_to_the_git_folder/”, export ROSETTA_FOL=”/Path_to_Rosetta/”. Additionally, set either PBS_HOME=”/Path_to_PBS_bin_folder/”, or SGE_HOME=”/Path_to_SGE_bin_folder/”, depending on the scheduler you are using.
+
+6. When working with PBS, the environment parameter PBS_O_WORKDIR=/Path_to_the_git_folder/Patchdok_Results has to be set whereever a job is executed. You can achieve this by appending
+
+    export PBS_O_WORKDIR=/Path_to_the_git_folder/Patchdok_Results
+
+to /etc/pbs.conf (on all cluster nodes). Another option is to write this line to a file, e.g. env.txt, and then set the enrionment parameter SCHEDULER_PARAMS=/Path_to_env.txt before starting PRosettaC (see below "Additional parameters").
+When using SGE, do the same except with /etc/sge.conf.
+
+
 
 Usage: python main.py/auto.py Protac_params.txt
 
-In order to send the main job also through PBS, use:
+In order to send the main job also to the job scheduler, use:
 python extended.py/short.py Protac_params.txt
 
 Protac_param.txt will include the input files and should look like this:
@@ -62,6 +71,18 @@ NOTES:
 protac.smi is a file with a single line which is the smiles representation of the full PROTAC.
 Due to a reserved name, the params file must not be called params.txt.
 Use "Full: True" for a full and long run, and "Full: False" for a shorter run of lower quality, with less global and local docking runs
+Use "ClusterName: [PBS|SGE]" to set the scheduler (if you use PBS you don't need to specify it at all, because that's the default)
+
+
+Additional parameters:
+In the config file you can also specify the optional parameters RosettaDockMemory and ProtacModelMemory. These set the
+amount of memory assigned per job at step 3 and 4 described in the paper and default to 8000mb and 4000mb, respectively.
+
+You can also set the environment variable SCHEDULER_PARAMS to a file, whose content is prepended to each job file sent to the scheduler. This is useful for scheduler-specific job-level configuration (e.g. number of dedicated cpus) or for setup like activating a conda environement to run the job in etc.
+
+
+How to implement a scheduler
+To add support for a specific scheduler simply implement the abstract class Cluster in cluster/Cluster.py like cluster.PBS.PBS and cluster.SGE.SGE do. Then add the scheduler as entry in cluster/__init__.py.
 
 Authors:
 Daniel Zaidman, Nir London

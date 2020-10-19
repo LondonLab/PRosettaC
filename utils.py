@@ -63,3 +63,26 @@ def patchdock(structs, anchors, min_dist, max_dist, num_results=1000, threshold=
         os.system('sed -i \'s/PT1 X/PT1 Y/g\' Patchdock_Results/pd.' + str(i + 1) + '.pdb')
     return Num_Results
 
+def read_params(config_file: str) -> dict:
+    """
+    Reads given config file and parses its content. Returns a dictionary with the parameter names as keys. Parameters
+    not set in the config file are set to their default value.
+    """
+    # Lines must be formatted as "key: value". Ignore empty lines.
+    with open(config_file) as f:
+        lines = [l.strip() for l in f.readlines() if l.strip() != '']
+    params = {k.strip(): v.strip() for k, v in [l.split(':') for l in lines]}
+
+    # Set defaults if missing
+    try:
+        params['RosettaDockMemory'] = int(params.get('RosettaDockMemory', 8000))
+    except ValueError:
+        sys.exit(f'Could not interpret RosettaDockMemory from {config_file} as megabyte (int): {params["RosettaDockMemory"]}')
+    try:
+        params['ProtacModelMemory'] = int(params.get('ProtacModelMemory', 4000))
+    except ValueError:
+        sys.exit(f'Could not interpret ProtacModelMemory from {config_file} as megabyte (int): {params["ProtacModelMemory"]}')
+    params['ClusterName'] = params.get('ClusterName', 'PBS')
+
+    return params
+
