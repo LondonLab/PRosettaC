@@ -143,7 +143,7 @@ def SampleDist(Heads, Anchors, Linkers, n = 200, output_hist="initial_distances.
     [HeadA_sdf, HeadB_sdf] = Heads
     #linkers
     with open(Linkers, 'r') as f:
-        linkers = [Chem.MolFromSmiles(line.split()[0]) for line in f]
+        linkers = [Chem.MolFromSmiles(f.readline().split()[0])]
     #loading the heads sdf files
     HeadA = Chem.SDMolSupplier(HeadA_sdf)[0]
     HeadB = Chem.SDMolSupplier(HeadB_sdf)[0]
@@ -228,7 +228,7 @@ def GenRandConf(Heads, Anchors, Linkers, n=1000, output_hist="initial_distances.
     [HeadA_sdf, HeadB_sdf] = Heads
     #linkers
     with open(Linkers, 'r') as f:
-        linkers = [Chem.MolFromSmiles(line.split()[0]) for line in f]
+        linkers = [Chem.MolFromSmiles(f.readline().split()[0])]
     #loading the heads sdf files
     HeadA = Chem.SDMolSupplier(HeadA_sdf)[0]
     HeadB = Chem.SDMolSupplier(HeadB_sdf)[0]
@@ -260,7 +260,7 @@ def GenRandConf(Heads, Anchors, Linkers, n=1000, output_hist="initial_distances.
 def GenConstConf(Heads, Docked_Heads, Head_Linkers, output_sdf, Anchor_A, v_atoms_sdf, n = 100, homo_protac = False):
     writer = Chem.SDWriter(output_sdf)
     with open(Head_Linkers, 'r') as f:
-        head_linkers = [Chem.MolFromSmiles(line.split()[0]) for line in f]
+        head_linkers = [Chem.MolFromSmiles(f.readline().split()[0])]
     #loading the heads sdf files
     HeadA = Chem.SDMolSupplier(Heads[0])[0]
     HeadB = Chem.SDMolSupplier(Heads[1])[0]
