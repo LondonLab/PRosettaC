@@ -54,6 +54,10 @@ def main(name, argv):
                 new_head = Heads[i].split('.')[0] + "_H.sdf"
                 utils.addH_sdf(Heads[i], new_head)
                 Anchors[i] = pl.translate_anchors(Heads[i], new_head, Anchors[i])
+                if Anchors[i] == -1:
+                        log.write('ERROR: There is a problem with the maximal common substructure between the PROTAC and PDB ligand ' + LIG[i] + '.\n')
+                        log.close()
+                        sys.exit()
                 Heads[i] = new_head
                 #Cleaning the structures
                 rs.clean(Structs[i], Chains[i])

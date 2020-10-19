@@ -63,6 +63,8 @@ def translate_anchors(old_sdf, new_sdf, old_anchor):
     print(Chem.MolToSmiles(OldSdf))
     print(Chem.MolToSmiles(NewSdf))
     NewMatch = NewSdf.GetSubstructMatch(OldSdf)
+    if len(NewMatch) == 0:
+        return -1
     print(NewMatch)
     return NewMatch[old_anchor]
 
