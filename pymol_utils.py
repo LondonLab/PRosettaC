@@ -153,13 +153,13 @@ def get_rec_plus_lig(pdb_id, lig, rec_file, lig_file, new_chain):
         chain = list(set(stored.list))
         if not len(chain) == 1:
             return False
-        chain = chain[0][0]
+        chain = chain[0]
     else:
         cmd.iterate('resn ' + lig, "stored.list.append((chain))")
         chain = list(set(stored.list))
         if len(chain) == 0:
             return False
-        chain = chain[0][0]
+        chain = chain[0]
         cmd.select(lig_sele, 'resn ' + lig + ' and chain ' + chain)
     cmd.select(rec_sele, 'poly and chain ' + chain)
     cmd.alter(rec_sele, 'chain=\'' + new_chain + '\'')
