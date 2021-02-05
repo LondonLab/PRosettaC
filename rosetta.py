@@ -3,7 +3,7 @@ import utils
 
 FOLDER = utils.SCRIPTS_FOL + "Rosetta/"
 SCRIPTS = utils.ROSETTA_FOL + "/main/source/bin/rosetta_scripts.default.linuxgccrelease"
-CLEAN = "python2.7 " + utils.ROSETTA_FOL + "/tools/protein_tools/scripts/clean_pdb.py"
+CLEAN = utils.ROSETTA_FOL + "/tools/protein_tools/scripts/clean_pdb.py"
 
 #get only the ATOM entries for specific chains
 def clean(struct, chains):

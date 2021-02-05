@@ -161,6 +161,10 @@ def get_rec_plus_lig(pdb_id, lig, rec_file, lig_file, new_chain):
             return False
         chain = chain[0]
         cmd.select(lig_sele, 'resn ' + lig + ' and chain ' + chain)
+    cmd.select('heavy_atoms', lig_sele + ' and not elem H')
+    lig_num_atoms = cmd.count_atoms('heavy_atoms')
+    if lig_num_atoms < 10:
+        return False
     cmd.select(rec_sele, 'poly and chain ' + chain)
     cmd.alter(rec_sele, 'chain=\'' + new_chain + '\'')
     cmd.save(lig_file, lig_sele)
