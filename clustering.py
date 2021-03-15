@@ -78,12 +78,12 @@ def apply_DBSCAN(native, names, chain, threshold, cls_size_threshold=5):
         for (x, y) in names:
                 names_dict[x] = y
         with open(native, 'r') as f:
-                native = [line[27:].split()[:3] for line in f if line[:4] == 'ATOM' and line[21] == chain and '  CA  ' in line]
+                native = [[line[30:38], line[38:46], line[46:54]] for line in f if line[:4] == 'ATOM' and line[21] == chain and '  CA  ' in line]
         native = [[float(x) for x in line] for line in native]
         models = []
         for (l, y) in names:
                 with open(l, 'r') as f:
-                        final = [line[27:].split()[:3] for line in f if line[:4] == 'ATOM' and line[21] == chain and '  CA  ' in line]
+                        final = [[line[30:38], line[38:46], line[46:54]] for line in f if line[:4] == 'ATOM' and line[21] == chain and '  CA  ' in line]
                 final = [[float(x) for x in line] for line in final]
                 models.append(final)
                 if not len(native) == len(final):
