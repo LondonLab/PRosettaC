@@ -17,17 +17,17 @@ def get_mcs_sdf(old_sdf, new_sdf, protac):
     utils.addH_sdf(old_sdf)
     OldSdf = Chem.SDMolSupplier(old_sdf)[0]
     if OldSdf == None:
-        return None
+        return False, old_sdf + ' is not readable by RDKit.'
     PROTAC = Chem.MolFromSmiles(protac)
     print(Chem.MolToSmiles(OldSdf))
     print(Chem.MolToSmiles(PROTAC))
-    mcs = rdFMCS.FindMCS([OldSdf, PROTAC], ringMatchesRingOnly=False, completeRingsOnly=False)
+    mcs = rdFMCS.FindMCS([OldSdf, PROTAC], ringMatchesRingOnly=False, completeRingsOnly=False, timeout=1)
     print(mcs.smartsString)
     mcs_patt = Chem.MolFromSmarts(mcs.smartsString)
     print(mcs_patt.GetNumHeavyAtoms())
     print(OldSdf.GetNumHeavyAtoms())
     if mcs_patt.GetNumHeavyAtoms() < OldSdf.GetNumHeavyAtoms() * 0.6:
-        return None
+        return False, 'The MCS (maximal common substructure) is below the size threshold (at least 60 percent) compared with ' + old_sdf + '.'
     rwmol = Chem.RWMol(mcs_patt)
     rwconf = Chem.Conformer(rwmol.GetNumAtoms())
     Match = OldSdf.GetSubstructMatch(mcs_patt)
@@ -36,15 +36,15 @@ def get_mcs_sdf(old_sdf, new_sdf, protac):
     rwmol.AddConformer(rwconf)
     writer = Chem.SDWriter(new_sdf)
     writer.write(rwmol)
+    print(new_sdf)
     NewSdf = Chem.SDMolSupplier(new_sdf, sanitize=False)[0]
     NewSdf = Chem.MolFromSmarts(Chem.MolToSmarts(NewSdf))
-    print(Chem.MolToSmiles(NewSdf))
     Matches = NewSdf.GetSubstructMatches(NewSdf, uniquify=False)
     print(Matches)
     if len(Matches) == 0:
-        return None
+        return False, ''
     elif len(Matches) == 1:
-        return 0
+        return True, 0
     else:
         for i in range(len(Matches[0])):
             a = Matches[0][i]
@@ -54,8 +54,8 @@ def get_mcs_sdf(old_sdf, new_sdf, protac):
                     allowed = False
                     break
             if allowed:
-                return a
-    return None
+                return True, a
+    return False, 'The MCS (maximal common substructure) between the PROTAC smiles and ' + LIG[i] + ' ligand does not have an anchor atom which is uniquly defined in regard to smiles.'
 
 def translate_anchors(old_sdf, new_sdf, old_anchor):
     OldSdf = Chem.SDMolSupplier(old_sdf, sanitize=False)[0]
@@ -64,6 +64,7 @@ def translate_anchors(old_sdf, new_sdf, old_anchor):
     print(Chem.MolToSmiles(NewSdf))
     NewMatch = NewSdf.GetSubstructMatch(OldSdf)
     if len(NewMatch) == 0:
+        print("Im here")
         return -1
     print(NewMatch)
     return NewMatch[old_anchor]

@@ -20,6 +20,9 @@ def addH_sdf(sdf_file, new_sdf = None):
 def pdb2sdf(pdb_file, sdf_file):
     os.system(OB + '/babel ' + pdb_file + ' ' + sdf_file)
 
+def sdf2sdf(sdf_file):
+    os.system(OB + '/babel ' + sdf_file + ' ' + sdf_file)
+
 #merge a virtual atom sdf file into an input sdf file
 def add_virtual_atoms(input_sdf, v_atoms_sdf, output_sdf):
     with open(input_sdf, 'r') as f:

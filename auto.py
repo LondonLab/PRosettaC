@@ -38,16 +38,40 @@ def main(name, argv):
                 if not '.pdb' in PDB[i] and '.sdf' in LIG[i]:
                         log.write('ERROR: An .sdf file can only be chosen is a corresponding .pdb file is chosen\n')
                         sys.exit()
-                if not pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i]):
-                        log.write('ERROR: There is a problem with the PDB chains. If using an .sdf file, it should be close to exactly one protein chain in its appropriate .pdb file. If using a LIG name, make sure that the ligand has a chain assigned to it within the .pdb file. Also, make sure the ligand is has at least 10 heavy atoms.\n')
+                # Seperating the protein from the ligand, changing the chain identifiers to A and B, and saving each one as a file.
+                try:
+                        rec_lig_bool, rec_lig_mes = pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i])
+                        #if not pymol_utils.get_rec_plus_lig(PDB[i], LIG[i], Structs[i], Heads[i], Chains[i]):
+                        #        log.write('ERROR: There is a problem with the PDB chains. If using an .sdf file, it should be close to exactly one protein chain in its appropriate .pdb file. If using a LIG name, make sure that the ligand has a chain assigned to it within the .pdb file, which matches the chain of its protein. Also, make sure the ligand is has at least 10 heavy atoms.\n')
+                        if rec_lig_bool:
+                                log.write('INFO: ' + rec_lig_mes + '\n')
+                        else:
+                                log.write('ERROR: There is a problem with the PDB chains. ' + rec_lig_mes + '\n')
+                                sys.exit()
+                except Exception:
+                        log.write('ERROR: Unexpected error ocurred during protein and ligand seperation with ' + PDB[i] + ' and ' + LIG[i] + '. Please check your input files for any mistakes and irregularities.\n')
                         sys.exit()
-                Anchors.append(pl.get_mcs_sdf(Heads[i], Subs[i], protac))
-                if Anchors[i] == None:
-                        log.write('ERROR: There is some problem with the PDB ligand ' + LIG[i] + '. It could be either one of the following options: the ligand is not readable by RDKit, the MCS (maximal common substructure) between the PROTAC smiles and ' + LIG[i] + ' ligand does not have an anchor atom which is uniquly defined in regard to smiles, or there is a different problem regarding substructure match. Try to choose a different PDB template, or use the manual option, supplying your own .sdf files.\n')
-                        log.close()
+                #Choosing anchor atoms.
+                try:
+                        #anchors_output is either the anchor (if successful) or the content of the error message (if failed).
+                        anchors_bool, anchors_output = pl.get_mcs_sdf(Heads[i], Subs[i], protac)
+                        if anchors_bool:
+                                log.write('INFO: Anchors were chosen for ' + LIG[i] + '.\n')
+                                Anchors.append(anchors_output)
+                        else:
+                                log.write('ERROR: There is some problem with the PDB ligand ' + LIG[i] + '. ' + anchors_output + ' Try to choose a different PDB template, or use the manual option, supplying your own .sdf file\
+s.\n')
+                                sys.exit()
+                except Exception:
+                        log.write('ERROR: Unexpected error ocurred when trying to choose anchor atoms from ' + LIG[i] + '. Please check your input files for any mistakes and irregularities. If using a PDB, it could be that this is a problem with RDKit that cannot read the .sdf that is produced by the seperation. In this case, you can also try supplying the .sdf file manually, with the hydrogens added correctly. Also, you can simply try a different PDB template.\n')
                         sys.exit()
+                #Anchors.append(pl.get_mcs_sdf(Heads[i], Subs[i], protac))
+                #if Anchors[i] == None:
+                #        log.write('ERROR: There is some problem with the PDB ligand ' + LIG[i] + '. It could be either one of the following options: the ligand is not readable by RDKit, the MCS (maximal common substructure) between the PROTAC smiles and ' + LIG[i] + ' ligand does not have an anchor atom which is uniquly defined in regard to smiles, or there is a different problem regarding substructure match. Try to choose a different PDB template, or use the manual option, supplying your own .sdf files.\n')
+               #         log.close()
+               #         sys.exit()
         Heads = Subs
-        log.write('INFO: Cleaning structures, adding hydrogens to binders and running relax\n')
+        log.write('INFO: Cleaning structures, adding hydrogens to binders and running relax.\n')
         PT_params = []
         for i in [0, 1]:
                 #Adding hydrogens to the heads (binders)
@@ -56,7 +80,7 @@ def main(name, argv):
                 Anchors[i] = pl.translate_anchors(Heads[i], new_head, Anchors[i])
                 if Anchors[i] == -1:
                         log.write('ERROR: There is a problem with the maximal common substructure between the PROTAC and PDB ligand ' + LIG[i] + '.\n')
-                        log.close()
+                #        log.close()
                         sys.exit()
                 Heads[i] = new_head
                 #Cleaning the structures
