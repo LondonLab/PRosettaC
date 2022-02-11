@@ -70,13 +70,13 @@ class SLURM(Cluster):
                 cur_job.close()
 
         def runSingle(self, command):
-                raise NotImplementedError('This is not implemented for SGE.')
+                raise NotImplementedError('This is not implemented for SLURM.')
 
         def runSingleDepend(self, command, depend_jobs_file):
-                raise NotImplementedError('This is not implemented for SGE.')
+                raise NotImplementedError('This is not implemented for SLURM.')
 
         def runSingleShell(self, command):
-                raise NotImplementedError('This is not implemented for SGE.')
+                raise NotImplementedError('This is not implemented for SLURM.')
 
-        def runBatchJobs(self, dirlist, command, batch_size=12, mem='2000mb'):
-                raise NotImplementedError('This is not implemented for SGE.')
+        def runBatchJobs(self, dirlist, command, batch_size=12, mem='2000'):
+                raise NotImplementedError('This is not implemented for SLURM.')
