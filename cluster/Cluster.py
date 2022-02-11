@@ -54,7 +54,7 @@ class Cluster:
                         print("Not done yet")
                         if i == timeout:
                                 break
-                        time.sleep(1000)
+                        time.sleep(1)
                         i += 1
 
         def jobsRunning(self, job_ids: List[str]) -> bool:

@@ -145,7 +145,7 @@ s.\n')
                 suffix.append([s, s.split('.')[1].split('_')])
                 suffix[-1][1] = suffix[-1][1][0] + '_' + str(int(suffix[-1][1][2]))
         commands = ['python ' + utils.SCRIPTS_FOL + '/constraint_generation.py ../' + Heads[0] + ' ../' + Heads[1] + ' ../' + Linkers + ' ' + s[1] + " " + s[0] + " " + ''.join(Chains) for s in suffix]
-        jobs = cluster.runBatchCommands(commands, batch_size=12, mem=params['ProtacModelMemory'])
+        jobs = cluster.runBatchCommands(commands, mem=params['ProtacModelMemory'])
         log.write('INFO: Constrained conformation generation jobs: ' + str(jobs) + '\n')
         cluster.wait(jobs)
         
