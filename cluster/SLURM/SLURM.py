@@ -46,9 +46,9 @@ class SLURM(Cluster):
 
         def writeJobFile(self, job_file: str, commands: List[str], mem: int) -> None:
                 cur_job = open(job_file, 'w')
-                job_text = job_template.replace('MEMORY', str(mem) + 'MB')
-                job_text = job_text.replace('JOB_NAME', 'PRosettaC_' + str(uuid.uuid4()))
+                job_text = job_template.replace('MEM_PER_CPU', str(mem))
                 job_text = job_text.replace('CPUS_PER_TASK', len(commands))
+                job_text = job_text.replace('JOB_NAME', 'PRosettaC_' + str(uuid.uuid4()))
 
                 # Prepend scheduler params to job file, if the environment variable SCHEDULER_PARAMS is set.
                 loaded_params = False
