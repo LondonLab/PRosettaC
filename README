@@ -19,7 +19,7 @@ conda install -c schrodinger pymol
     export PBS_O_WORKDIR=/Path_to_the_git_folder/Patchdok_Results
 
 to /etc/pbs.conf (on all cluster nodes). Another option is to write this line to a file, e.g. env.txt, and then set the enrionment parameter SCHEDULER_PARAMS=/Path_to_env.txt before starting PRosettaC (see below "Additional parameters").
-When using SGE, do the same except with /etc/sge.conf.
+When using SGE, do the same except with /etc/sge.conf. Also, use /etc/slurm.conf when using SLURM
 
 
 
@@ -71,7 +71,7 @@ NOTES:
 protac.smi is a file with a single line which is the smiles representation of the full PROTAC.
 Due to a reserved name, the params file must not be called params.txt.
 Use "Full: True" for a full and long run, and "Full: False" for a shorter run of lower quality, with less global and local docking runs
-Use "ClusterName: [PBS|SGE]" to set the scheduler (if you use PBS you don't need to specify it at all, because that's the default)
+Use "ClusterName: [PBS|SGE|SLURM]" to set the scheduler (if you use PBS you don't need to specify it at all, because that's the default)
 
 
 Additional parameters:
