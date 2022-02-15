@@ -27,7 +27,7 @@ def main(name, argv):
                 return
         with open('score.sc', 'r') as f:
                 local_lines = [line.split() for line in f][2:]
-        local_lines = [line for line in local_lines if float(line[1]) < 0]
+        local_lines = [line for line in local_lines if len(line) > 0 and float(line[1]) < 0]
         if len(local_lines) == 0:
                 return
         local_lines.sort(key=lambda x: float(x[1]))
