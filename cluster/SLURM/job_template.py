@@ -4,8 +4,8 @@
 job_template = '#!/bin/bash\n' \
                 '#SBATCH -J JOB_NAME\n' \
                 '#SBATCH -o JOB_NAME.out\n' \
-                '#SBTACH --cpus-per-task=CPUS_PER_TASK\n' \
-                '#SBTACH --mem-per-cpu=MEM_PER_CPU\n' \
+                '#SBATCH --cpus-per-task=CPUS_PER_TASK\n' \
+                '#SBATCH --mem-per-cpu=MEM_PER_CPU\n' \
                 'HEADER\n' \
                 'source /etc/slurm.conf\n' \
                 'echo `hostname`\n' \
