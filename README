@@ -10,7 +10,7 @@ conda install -c schrodinger pymol
 
 3. Download and Install OpenBabel (http://openbabel.org/wiki/Main_Page), PatchDock (https://bioinfo3d.cs.tau.ac.il/PatchDock/) and Rosetta (https://www.rosettacommons.org/). The Rosetta versino that was used in this study is: 2019.27.post.dev+132.master.966c9eb 966c9eb6b3ab993de7aa3af5988125b7c2e464af git@github.com:RosettaCommons/main.git 2019-07-18T11:43:25.
 
-4. For job scheduling our scripts rely on PBS (https://en.wikipedia.org/wiki/Portable_Batch_System) or Sun Grid Engine/Open Grid Engine (https://en.wikipedia.org/wiki/Oracle_Grid_Engine).
+4. For job scheduling our scripts rely on PBS (https://en.wikipedia.org/wiki/Portable_Batch_System) or Sun Grid Engine/Open Grid Engine (https://en.wikipedia.org/wiki/Oracle_Grid_Engine), Slurm Workload Manager (https://slurm.schedmd.com).
 
 5. Set the following environment parameters: export PATCHDOCK=”/Path_to_PatchDock/”, export OB=”/Path_to_OpenBabel/”, export SCRIPTS_FOL=”/Path_to_the_git_folder/”, export ROSETTA_FOL=”/Path_to_Rosetta/”. Additionally, set either PBS_HOME=”/Path_to_PBS_bin_folder/”, or SGE_HOME=”/Path_to_SGE_bin_folder/”, depending on the scheduler you are using.
 
