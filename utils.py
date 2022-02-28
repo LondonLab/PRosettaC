@@ -9,11 +9,11 @@ ROSETTA_FOL = os.environ["ROSETTA_FOL"]
 #adding hydrogens to an sdf file is done by converting it to pdb, and then back to sdf using openbabel
 def addH_sdf(sdf_file, new_sdf = None):
     tmp_pdb = sdf_file.split('.')[0] + '.pdb'
-    os.system(OB + '/babel ' + sdf_file + ' ' + tmp_pdb + ' -h')
+    os.system(OB + '/babel ' + sdf_file + ' ' + tmp_pdb)
     if new_sdf == None:
-        os.system(OB + '/babel ' + tmp_pdb + ' ' + sdf_file)
+        os.system(OB + '/babel ' + tmp_pdb + ' ' + sdf_file + ' -h')
     else:
-        os.system(OB + '/babel ' + tmp_pdb + ' ' + new_sdf)
+        os.system(OB + '/babel ' + tmp_pdb + ' ' + new_sdf + ' -h')
     os.remove(tmp_pdb)
 
 #openbabel conversion of pdb to sdf
