@@ -25,6 +25,9 @@ def main(name, argv):
                         protac = f.readline().split()[0]
         else:
                 protac = Linkers
+                with open('protac.smi', 'w') as f:
+                        f.write(protac + '\n')
+                Linkers = 'protac.smi'
         Structs = ['StructA.pdb', 'StructB.pdb']
         Heads = ['HeadA.sdf', 'HeadB.sdf']
         Subs = ['SubA.sdf', 'SubB.sdf']
